@@ -3,3 +3,6 @@ The ?? operator provides a default value of false if no preference is saved. Wit
 
 Phase 2
 Testing file writes with the console helps make sure data saves correctly before displaying it in the UI. The NoteStorage class keeps file operations separate, making the code easier to organize and maintain.
+
+Phase 3
+If a file does not exist, readAsString() throws an exception. The try/catch block catches the error and returns a default message instead of crashing the app.

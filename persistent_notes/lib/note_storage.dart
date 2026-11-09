@@ -21,4 +21,13 @@ class NoteStorage {
     final file = await _localFile;
     return await file.readAsString();
   }
+
+  Future<String> readNote() async {
+    try {
+      final file = await _localFile;
+      return await file.readAsString();
+    } catch (e) {
+      return 'No notes saved yet.';
+    }
+  }
 }

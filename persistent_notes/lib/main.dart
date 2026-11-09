@@ -18,11 +18,13 @@ class _MyAppState extends State<MyApp> {
   final NoteStorage _storage = NoteStorage();
   final TextEditingController _noteController = TextEditingController();
   String _status = '';
+  String _savedNote = 'No notes saved yet.';
 
   @override
   void initState() {
     super.initState();
     _loadThemePreference();
+    _loadSavedNote();
   }
 
   @override
@@ -33,6 +35,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _loadThemePreference() async {
     final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
     setState(() {
       _isDarkMode = prefs.getBool('isDarkMode') ?? false;
     });
@@ -47,9 +50,21 @@ class _MyAppState extends State<MyApp> {
     await prefs.setBool('isDarkMode', value);
   }
 
+  Future<void> _loadSavedNote() async {
+    final note = await _storage.readNote();
+    if (!mounted) return;
+    setState(() {
+      _savedNote = note;
+      _noteController.text =
+          note == 'No notes saved yet.' ? '' : note;
+    });
+  }
+
   Future<void> _saveNote() async {
     await _storage.writeNote(_noteController.text);
+    if (!mounted) return;
     setState(() {
+      _savedNote = _noteController.text;
       _status = 'Note saved to disk!';
     });
   }
@@ -57,6 +72,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _printNote() async {
     final content = await _storage.readRawContent();
     debugPrint(content);
+    if (!mounted) return;
     setState(() {
       _status = 'Note printed to console!';
     });
@@ -71,9 +87,10 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Persistent Notes'),
         ),
-        body: Padding(
+        body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SwitchListTile(
                 title: const Text('Dark Mode'),
@@ -97,7 +114,22 @@ class _MyAppState extends State<MyApp> {
                 onPressed: _printNote,
                 child: const Text('Print File to Console'),
               ),
+              const SizedBox(height: 12),
               Text(_status),
+              const SizedBox(height: 20),
+              const Text(
+                'Saved Note:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(_savedNote),
+                ),
+              ),
             ],
           ),
         ),
