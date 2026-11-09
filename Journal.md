@@ -6,3 +6,6 @@ Testing file writes with the console helps make sure data saves correctly before
 
 Phase 3
 If a file does not exist, readAsString() throws an exception. The try/catch block catches the error and returns a default message instead of crashing the app.
+
+Phase 4
+I tested saving and loading notes, restarting the app, and switching between light and dark mode. Everything worked as expected, and I learned how to use SharedPreferences and file storage to keep data between app launches.
